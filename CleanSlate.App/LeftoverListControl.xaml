@@ -1,0 +1,51 @@
+<UserControl x:Class="CleanSlate.UI.LeftoverListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="B2V"/>
+    </UserControl.Resources>
+    <DockPanel>
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <Button Style="{StaticResource Secondary}" Content="Отметить проверенные" Click="SelectVerified_Click"/>
+            <Button Style="{StaticResource Secondary}" Content="Отметить все найденные" Click="SelectAll_Click"/>
+            <Button Style="{StaticResource Secondary}" Content="Снять отметки" Click="SelectNone_Click"/>
+        </WrapPanel>
+        <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+            <TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Status}" Foreground="{StaticResource Muted}" TextWrapping="Wrap"/>
+        </StackPanel>
+        <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3" Margin="0,0,0,6"
+                     Visibility="{Binding IsBusy, Converter={StaticResource B2V}}"/>
+        <ListBox ItemsSource="{Binding Items}" BorderBrush="{StaticResource Line}"
+                 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="2,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Top" Margin="0,3,10,0"/>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding Path}" FontFamily="Consolas" TextWrapping="Wrap"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                <TextBlock Text="{Binding Category}" Foreground="{StaticResource Muted}"/>
+                                <TextBlock Text=" · " Foreground="{StaticResource Muted}"/>
+                                <TextBlock Text="{Binding SizeText}" Foreground="{StaticResource Muted}"/>
+                                <TextBlock Text=" · " Foreground="{StaticResource Muted}"/>
+                                <TextBlock x:Name="Badge" Text="Подтверждено" Foreground="#1E8E4E" FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Reason}" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Confidence}" Value="Unverified">
+                            <Setter TargetName="Badge" Property="Text" Value="Не подтверждено"/>
+                            <Setter TargetName="Badge" Property="Foreground" Value="#C26A00"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>
